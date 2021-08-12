@@ -5,7 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "some/path/{someParam}",
+      "route": "api/v1/resourcetests/cosmosdb/get",
       "methods": [
         "get"
       ]
@@ -16,5 +16,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/HttpTriggerFunction/index.js"
+  "scriptFile": "../dist/CosmosdbTestGet/index.js"
 }
