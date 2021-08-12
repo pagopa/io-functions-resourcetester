@@ -53,7 +53,7 @@
     "@pagopa/io-functions-commons": "^20.6.6",
     "@pagopa/openapi-codegen-ts": "^9.2.0",
     "@pagopa/ts-commons": "^9.6.0",
-    "azure-storage": "^2.10.3",
+    "azure-storage": "^2.10.4",
     "durable-functions": "^1.4.4",
     "express": "^4.15.3",
     "fp-ts": "1.17.4",
