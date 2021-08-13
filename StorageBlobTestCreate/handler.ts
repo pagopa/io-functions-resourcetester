@@ -60,7 +60,7 @@ export const HttpHandler = (): IHttpHandler => async (
         message: `OK (blobId=${br.name})`
       })
     )
-    .mapLeft(ce => ResponseErrorInternal(JSON.stringify(ce)))
+    .mapLeft(ce => ResponseErrorInternal(ce.message))
     .fold<IResourcesTestResponse>(identity, identity)
     .run();
 

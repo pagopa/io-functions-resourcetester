@@ -54,7 +54,7 @@ export const HttpHandler = (): IHttpHandler => async (
         message: `OK (response=${JSON.stringify(r.entries.length)})`
       })
     )
-    .mapLeft(ce => ResponseErrorInternal(JSON.stringify(ce)))
+    .mapLeft(ce => ResponseErrorInternal(ce.message))
     .fold<IResourcesTestResponse>(identity, identity)
     .run();
 
