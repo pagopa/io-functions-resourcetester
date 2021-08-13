@@ -132,7 +132,6 @@ stages:
   # Promote the staging instance to production
   - stage: Deploy_production
     dependsOn:
-      - Healthcheck
       - Deploy_staging
     jobs:
       - job: 'do_deploy'       
