@@ -129,23 +129,6 @@ stages:
               slotName: 'staging'
             displayName: Deploy to staging slot
 
-  # Check that the staging instance is healthy
-  - stage: Healthcheck
-    dependsOn:
-      - Deploy_staging
-    jobs:
-      - job: 'do_healthcheck'       
-        steps:  
-          - template: templates/rest-healthcheck/template.yaml@pagopaCommons
-            parameters:
-              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
-              appName: '$(PRODUCTION_APP_NAME)'
-              endpoint: 'https://$(PRODUCTION_APP_NAME)-staging.azurewebsites.net/api/v1/info'
-              endpointType: 'private'
-              containerInstanceResourceGroup: 'io-p-rg-common'
-              containerInstanceVNet: 'io-p-vnet-common'
-              containerInstanceSubnet: 'azure-devops' 
-
   # Promote the staging instance to production
   - stage: Deploy_production
     dependsOn:
