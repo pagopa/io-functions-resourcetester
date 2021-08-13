@@ -3,7 +3,7 @@
   "description": "",
   "author": "IO team",
   "repository": "https://github.com/pagopa/io-functions-resourcetester",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "scripts": {
     "postbuild": "dependency-check package.json --no-dev --missing ./dist/**/*.js",
