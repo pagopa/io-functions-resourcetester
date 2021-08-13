@@ -1,12 +1,11 @@
 {
-  "name": "@pagopa/your-package-name",
+  "name": "@pagopa/io-functions-resourcetester",
   "description": "",
   "author": "IO team",
-  "repository": "https://github.com/pagopa/<YOUR PROJECT NAME>",
+  "repository": "https://github.com/pagopa/io-functions-resourcetester",
   "version": "1.1.0",
   "license": "MIT",
   "scripts": {
-    "prebuild": "shx rm -rf dist && yarn generate",
     "postbuild": "dependency-check package.json --no-dev --missing ./dist/**/*.js",
     "build": "tsc",
     "watch": "tsc -w",
