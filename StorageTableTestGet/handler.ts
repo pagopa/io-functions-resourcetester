@@ -51,7 +51,7 @@ export const HttpHandler = (): IHttpHandler => async (
     .map(r =>
       ResponseSuccessJson({
         headers: ctx.req?.headers,
-        message: `OK (response=${JSON.stringify(r.entries.length)})`
+        message: `OK (count=${r.entries.length})`
       })
     )
     .mapLeft(ce => ResponseErrorInternal(ce.message))

@@ -31,7 +31,7 @@ const app = express();
 secureExpressApp(app);
 
 // Add express route
-app.get("/api/v1/resourcetests/blob/get/:blobId", HttpCtrl(blobService));
+app.get("/api/v1/resourcetests/blob/get", HttpCtrl(blobService));
 
 const azureFunctionHandler = createAzureFunctionHandler(app);
 

@@ -14,10 +14,10 @@ import {
   ResponseSuccessJson
 } from "@pagopa/ts-commons/lib/responses";
 import { fromOption, right, toError } from "fp-ts/lib/Either";
-import { identity } from "fp-ts/lib/function";
-import { BlobService } from "azure-storage";
-import { fromLeft, fromEither, tryCatch } from "fp-ts/lib/TaskEither";
-import { RequiredParamMiddleware } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/required_param";
+import { identity, toString } from "fp-ts/lib/function";
+import { BlobService, common } from "azure-storage";
+import { fromLeft, fromEither, tryCatch, taskify } from "fp-ts/lib/TaskEither";
+import { OptionalParamMiddleware } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/optional_param";
 import * as t from "io-ts";
 import { Option } from "fp-ts/lib/Option";
 
@@ -30,7 +30,7 @@ type IResourcesTestResponse =
 type IHttpHandler = (
   context: Context,
   blobService: BlobService,
-  blobId: string
+  blobId: Option<string>
 ) => Promise<IResourcesTestResponse>;
 
 const MESSAGE_CONTAINER_NAME = "message-blob";
@@ -38,16 +38,25 @@ const MESSAGE_CONTAINER_NAME = "message-blob";
 export const HttpHandler = (): IHttpHandler => async (
   ctx,
   blobService,
-  blobId: string
+  blobId: Option<string>
 ): Promise<IResourcesTestResponse> =>
-  tryCatch(
-    () => getBlobAsText(blobService, MESSAGE_CONTAINER_NAME, blobId),
-    toError
+  (blobId.isSome()
+    ? tryCatch(
+        () => getBlobAsText(blobService, MESSAGE_CONTAINER_NAME, blobId.value),
+        toError
+      )
+        .foldTaskEither<Error, Option<string>>(fromLeft, r => fromEither(r))
+        .foldTaskEither<Error, string>(fromLeft, r =>
+          fromEither(fromOption(new Error("Missing Blob"))(r))
+        )
+    : taskify<Error, BlobService.ListBlobsResult>(cb =>
+        blobService.listBlobsSegmented(
+          MESSAGE_CONTAINER_NAME,
+          (null as unknown) as common.ContinuationToken,
+          cb
+        )
+      )().map(r => toString(r.entries.length))
   )
-    .foldTaskEither<Error, Option<string>>(fromLeft, r => fromEither(r))
-    .foldTaskEither<Error, string>(fromLeft, r =>
-      fromEither(fromOption(new Error("Missing Blob"))(r))
-    )
     .map(b =>
       ResponseSuccessJson({
         headers: ctx.req?.headers,
@@ -64,7 +73,7 @@ export const HttpCtrl = (blobService: BlobService): express.RequestHandler => {
   const middlewaresWrap = withRequestMiddlewares(
     ContextMiddleware(),
     () => Promise.resolve(right(blobService)),
-    RequiredParamMiddleware("blobId", t.string)
+    OptionalParamMiddleware("blobId", t.string)
   );
 
   return wrapRequestHandler(middlewaresWrap(handler));
